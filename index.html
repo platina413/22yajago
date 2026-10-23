@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
 .wrap{max-width:1040px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
 header h1{font-family:var(--display);font-weight:400;font-size:30px;margin:0;letter-spacing:.01em}
 header p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .tab{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:10px 4px;cursor:pointer;font-family:var(--body);display:flex;flex-direction:column;align-items:center;gap:2px}
 .tab b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1}
 .tab span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -65,15 +65,20 @@ header p{margin:4px 0 0;color:var(--muted);font-size:13px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .gridbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:12.5px;table-layout:fixed}
+col.cn{width:96px}col.cd{width:auto}col.cs{width:64px}
 th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:middle}
 thead th{font-weight:700;font-size:13px;background:var(--panel);position:sticky;top:0}
 th.n{position:sticky;left:0;background:var(--panel);z-index:1;white-space:nowrap;font-weight:500}
 th.n small{color:var(--muted);font-variant-numeric:tabular-nums;margin-right:6px;display:inline-block;width:16px;text-align:right}
 td.sel,th.sel{background:var(--chalk-soft)}
-.c{display:block;border-radius:6px;padding:3px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.c{display:block;border-radius:6px;padding:3px 6px;white-space:normal;word-break:keep-all;font-variant-numeric:tabular-nums}
 .c.out{background:var(--out-soft);color:var(--out)}
-.c.p1{background:var(--p1-soft);color:var(--p1)}
+.c.p1{background:var(--p1-soft);color:var(--p1);line-height:1.35}
+.c.p1 b{font-weight:700}
+.c.inn{background:var(--chalk-soft);color:var(--chalk);box-shadow:inset 0 0 0 1px var(--chalk);line-height:1.35}
+.c.inn b{font-weight:700}
+.chip small{color:var(--chalk);font-size:12px;margin-left:4px}
 .c.ok{background:var(--ok-soft);color:var(--ok)}
 .c.x{background:var(--x-soft);color:var(--x);text-align:center;font-weight:700}
 tr.allx th.n{color:var(--x)}
@@ -99,7 +104,8 @@ th.n .badge{color:var(--chalk);margin-left:4px}
 .cklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px 40px}
 .ck{display:grid;grid-template-columns:4.6em auto auto;justify-content:start;gap:6px;align-items:center;padding:3px 0;border-bottom:1px dashed var(--line)}
 .ck .nm{font-size:15px;min-width:0}
-.ck .nm small{color:var(--p1);font-size:11.5px;margin-left:4px}
+.ck .nm small{display:block;color:var(--p1);font-size:11.5px;line-height:1.2}
+.no{color:var(--muted);font-size:.8em;font-variant-numeric:tabular-nums;margin-right:4px;font-weight:400}
 .ck button{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:8px;padding:4px 0;width:64px;font:inherit;font-size:13px;cursor:pointer}
 .ck button[aria-pressed="true"]{background:var(--x);border-color:var(--x);color:var(--panel);font-weight:700}
 .ck button:disabled,.btn:disabled{opacity:.4;cursor:default}
@@ -109,6 +115,11 @@ th.n .badge{color:var(--chalk);margin-left:4px}
 .logday .d{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:500}
 .logday .who{display:flex;flex-wrap:wrap;gap:4px 12px}
 .logday .who em{font-style:normal;color:var(--x);font-size:12.5px;margin-left:3px}
+.logday .who>span{display:inline-flex;align-items:baseline;gap:2px}
+.del{appearance:none;border:1px solid transparent;background:none;color:var(--muted);font:inherit;font-size:12px;cursor:pointer;border-radius:6px;padding:0 5px;margin-left:2px}
+.del:hover{border-color:var(--line);color:var(--x)}
+.del.armed{background:var(--x);color:var(--panel);border-color:var(--x)}
+.del:focus-visible{outline:2px solid var(--chalk)}
 .totals{display:flex;flex-wrap:wrap;gap:6px}
 .totals span{border-radius:999px;padding:3px 10px;font-size:13.5px;background:var(--x-soft);color:var(--x)}
 .totals b{font-variant-numeric:tabular-nums}
@@ -180,12 +191,12 @@ const P1=(sub,t)=>({k:'p1',sub,t,place:'학원'});
 const X={k:'x'}, OK={k:'ok',sub:'공동교육과정'};
 const ALLX={월:X,화:X,수:X,목:X,금:X,토:X};
 let S=[];
-const ENC={"s":"rzqWGWA9Zx/wYg9EjAZPaQ==","i":"bnP6HGHKkagQO3+r","c":"bNRhRFmZxoZemuA7KsyfSCoEUGMqd10Vshh53dBnj22Mt0B9+IAwKPKV34DPMdjtEPYW2pW2WY2mFM6ORnMMmVdsYv/qpbDSGcWIga8edznEDpS+sSbMDKbmjEpqsVOs6BUzDNfZcTgB91jk0gSaUpygb4xeRMZJoA+2ADli8Ql9GIBsbKMx/eO8/gKvZvOjTiz7Hl/o434egM2KcVD33stsGm00uUo2JNRVKshOWFHciGK5Yj3FvDRXXkqm2qnftHG+u7CKQZyh10cA8MpauaSgT3d2/jiWF5wr3AdXOxqlFM/s372iduTfPam1PHtVxCBtQmhlMRbDcqeWgXXkSXtAjjTG9UcZbsoMPaZz+AmKBFovpRoZC5UflUTPte9pNwPcioDDPIPvYMyG6DIKkHzK8T1i2Hb0D0XJZkAKudBMZ78jqEmolb+cyukU5rX0GxYrqd4UARRO2tmfI+osn5ayCEdpqY9GO1W90CsGwtufDZi3415IjGIp0eVuwsRwaNUonjuNE8RERd1o5Ny4Hj8B7j00BYR+qeOR4Esh8b3ZeCCEvH9oRsftSRzAcorakWFfVBi/cszdCKRMoYkQSbEfDmxVWWB3m/hWqXbNBaKpUgE2+/6E6Ap2Aj5CztN+Z92xhlUEmbXo1quKsY8xxMto0strCyM6RUxtIGy+gx4icpaXYShRTORNS5MdB+Tr6yoWZSSGNaw0PNtpKvHythO9vvJ1YbFlz7j8RE/Yx2HvOYkdooriUDoCI1GlekBDHZHGulZGHhO8x3YDmIlwwcXLeI3eT5g19Ye0wPpDDMXCzanJORH4/nLnxDaKN1KWiVSNYB2ilFMJvkTnd6g5mDjcrlus81gSLOf3/7DiCMDnHtKfXUX2iauB/mwUsfwolmvPirrmVBJxIXydxQaqb7vi36XgyOYQ2iP9zDZoh7pX4UTaiWPM+W3qnAigIMNRMpWf7cCqF1RTqlGgAD7ueUu5KRZ9yftF5FnDNC0bkKuY0zJdPumbBXZi0mxbg+xQ0Y7fajhLzjTecGdkP4IfIsRM3Ndx1Nx2uT/O5nl344Kdf5WBS2LiWur5dyHS+DgVb0FOq4j0soYEvyWIW/H24P4qtf2OyfIYCsn3zp4nZym4CdVaGzj4OWgYRF0VwMv1WO5KuU56Ta85nfF/2nacXF0Fp/a0DYrsr/cOnTB52Ri6YHiUNPM5HgjNPYnLUCa8ZUn4r3F8Elb1pWHaVIvG3Wxt5/gMgyYKZ5vsQ296kI6bO5TN5vg/brG0tfdEVIIfcjeJOpBULSpWtOUEeiWezdGpoWAfrEeaMf/beiz+d/jpif3WoOUToK8WzW7bytFE3vTt+tPTu2C4GCu2vHbwt/scMM9FSO+dz4Uvz/5929Dwgb9lUO2qMtYIgGpGOJel+No+vArslp8UbRYUEsy0kYWMyY50Ze/TF6rhbo7MTpkQ0TaHRdxYzXDlLb1kMXQMCxt+t53JitPuNk70blzIiGRrwGABnJvW45XULcvMllDHQlHrK14eKxHMB04a1fLdltxbGbH8AkByCB8WxK/goZjXxYLgB+0jiMwpml/gTkcJQR1N5osCIn945WIYzOYkmYxpMqzdg/5nclnzhLGbsehY601I9/0fkN4rs6aKlN/YSFQlW/z/f3vx44Q/0qucPx6/NvRNQpCvQAvvcnrahhpeIpSZkS7FXF1CEDwJPnZzw4FQ35KiPosV+xGdMI1neFCXGIzdviQXuJoww6dwYGREVF8QY4o++7TinCNvY3pMjIw2a2RKxctpouUJ+67ItOYZn0rY3qmxwLMmDDRM0/ScQ9HbiK4jJ6uYdDNiCeeYwprBrHLOyibRI6GFO+wgD5bGT+TfQYJZIL7/yW9jJRxRdICtR51kj9lrQojAr8oe4F/q7efItvm6CdegWE1H1LMmJn5fH7Qf/XLTRc4kiEF84P3UwsqX5ZuDR1WR9f3OTU+tPn3vcU7i7fFhu4NBjDnVQ5L3gWY/1SuhcI/iyxLJtRt2NHIc+j63WUNYBRc02uWt4S4hCnX6QjV51QYYHnZo9dO9qbaLpvRDxH1sCLtXiUTNRQon9kxAoNesVOZt/1BJMzfkOH1rcJo56G1C+DXL0cHUvhoe5nlnJ6V8SVyXfYuMpi1wLaOmgpcWd4auFb/ap4pgWVDcaAhkVxD+jqyFfV1bgMGq7Xwy/ryxQQIiErmu0/9avmqTsR+dJjKaFNDfmui8Nm4RPTbBKgpu6Uunp89cS1jgS5PeLtZ6i6ijxffED6cf09nV/fUnLnXTCVkOf64EZZWy/xeC3mNYMfTrmeWYGIOuwdSQ2MPekG3S/INkOuPM78FJ8Es007lhB616BuLq7NUhP40SbEB8sluiHfSFb6FeycxzXGqSe4yFhcP2GpJFy4JfdUt/QyEOZVbnLU79Fv1aHOAUMf86noZpS24ZAZlgD0szmqfkrnCMkSUtaWf+mdnood4QIwKkhKGtumt5odK9YvtDaZzIw+1IeJEJYuG0UJiNjZgL1A/8+wGIVwum9HL2/qyhTV1UMmGrBhgU7cB/m7XzEl5lBCUyTZfw7NjqbL8y8GH9U3AN7sFJXV0gLUqJxNSiq0VYct/dQGwe+U6T8xyKeTMa/ZnSUmj2en6hQtZ32e6we4sAtkUr5kWZm/Jn559E+uSxDilP338R9dQg2wd7OxNUjEQrDd4+p1D4iIhcmPibhinZWcDe0ozMYhL7KRFEq468bUjQL29ka8fTfIz/ZnMxVMg8VK5LbomJM7uSPqoWmItmerb8P1aWbH6l3891ImWDUFkHDhZWpBljF7AC7jAvmbK/yXDlIG1C44R323b0kDNwGAI1EfdLKZ2qi4P2X8MymEMC7IAbFjwiNa8nYINFW6hEDATwOLOgi/LHL5vGk8K7jbcTPerUpuRvfj1mYV2/3k9gtcTH/H0IwnlAPjCJ2xzBqM6sUBe6Vr1WV0kxIC7DB9+LaXJR9C85LXt0+y6cXKXy1VlHYtooeSeyK3SlPyZ40/xlEP5TUxziFyrAUcabO0vehxjJEGDVjalzCGECm29Z1rkx0uI1OnlAljNvqjbFc5JoTl0clKUIc1K92OwAgIn6Qjf3Y7yz2oTipHSLVJr0xTa9j9Zv1W4f+QnplmfL/m3gQtFw1YmUORwxW4l4MAmekg5g74jEUfVy8b5VPMMUeghnIplHY6pkU/0lFWv8Jby6qBs4aedVKBmIPG0i9hUbFdDurK92O96C8loRRXgvMrqZ0Nv2E69W/yStu2CZvl+UI4QY0C0haqC2D/pfzZIPI1FoGLKl0JZz6psB8xo97N+9UWYJbYAD328eLrWkOfq/9tTYYZxXrjLsmLYBeW09BVIJKR5XVyPynf9wstN7yu7wjYpz9aKZz7+ilMP11AMIa3GJaziGCekB7BNZrKaSkAKVZ9NhBa/BguxmaprggEJqd04bOWUEaRiAQb1ssYGMn3Frrhq3QH8xE+7E0l6KYb+1bFaA7xv/kxpu/7eHMtq1+L+WQ+q7WwI8y8yyqNDdavCzXbrlacT6//nhjxY6/VSUb7XmUsdXKVH19ETAyynxtY7ZxHGiqHZHQumzB5VpEU/C0Vd38BqLWkJPZYM+9OdwE0GeX8hGrnFCtXOUOuNhEp2rTZ4omwFwOdOL0ZyC8lN53cfJx0jm9Jxn/u0CnnaLee8Tkh9UUWwUSv7crbLM01v+QKCJu1KxyivHmtAC8X+4dK199tDq7TqAGgexWXmGBcKBJ++U4TBr8bg1YGvOgh1BXt35CaGVoBlILW6KvCv20985I6VemqBDWEe0A+WraPRad8xosRpClD49MSkaKJiaxsLMyPFAdXN6FJwNtSMnwc6XjeMD74uzyH+qpzk7jk43m2Xf0b2SRsV3tp/9jFN8SWC6uYwV6c0+Zr/BttD8Thc7S1lEVEYpj2kdFbUyzCR9WPVw0yLxd87OnIpUs1x2lDkJrbhQ3yChOsTY74nEpVTpZe/OFWxP7J2WBlZjMUTdN7AJSDeJV9v8IfbpJaVybjHyFcTMxWdOWwE0Hw8OSN7LKj5/fWXodWhgDOP0erxftLfUHI8gvrREVEP62bNMd1k4gYipQKfvAVDywzlRAx3gr5N8A+uh6P84S63ajhl3g2HjHGOl4kH8tfzQFUDeh2ZJ20w9WSyHsrzj3x8eh0x5Q/Kl8MQI9eFC0hsw1wctNKkBpqmQyP1usdKn5dzAI6J7fPdtbG2VRVYbSFz0LiM0D/YJG6b9Sil2u5yB/iAZxiGYSbngvV3vxi+ElB58rcqEFYyhw+9q+8xURTmAtygx2a//Ot24YdOA2Va0A3x1azo0pK0293hqx4z3oHpYWm8i9O8voWyq7qbiYTjQc0be6JIFQT2C2bEK0PSrPMzSpRpgETBz8k+hze+BHvkkD+theMdRbp5q"};
+const ENC={"s":"20j9sS296cE1UOWWkmncmQ==","i":"k0mphyYYlFSomT8A","c":"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"};
 const st=(s,d)=>s[1][d]||{k:'in'};
+const NO=n=>{const i=S.findIndex(s=>s[0]===n);return i<0?'':`<span class="no">${i+1}</span>`};
 function tally(d){
   const g={in:[],p1:[],ok:[],out:[],x:[]};
   S.forEach((s,i)=>{const v=st(s,d);g[v.k].push({n:i+1,name:s[0],v})});
-  g.out.sort((a,b)=>a.v.t.localeCompare(b.v.t));
   return {g,p1:g.in.length+g.ok.length+g.p1.length,p2:g.in.length+g.ok.length};
 }
 const short=t=>t.replace(/:00/g,'');
@@ -208,8 +219,8 @@ function group(color,title,list,body){
 }
 function renderDay(){
   const {g,p1,p2}=tally(cur);
-  const chips=l=>`<div class="chips">${l.map(o=>`<span class="chip">${esc(o.name)}</span>`).join('')}</div>`;
-  const rows=l=>`<div class="rows">${l.map(o=>`<span class="t">${esc(o.v.t)}</span><span>${esc(o.name)}</span><span class="s">${esc(o.v.place)}${o.v.sub?' · '+esc(o.v.sub):''}</span>`).join('')}</div>`;
+  const chips=l=>`<div class="chips">${l.map(o=>`<span class="chip">${NO(o.name)}${esc(o.name)}${o.v.note?`<small>${esc(o.v.note)}</small>`:''}</span>`).join('')}</div>`;
+  const rows=l=>`<div class="rows">${l.map(o=>`<span>${NO(o.name)}${esc(o.name)}</span><span class="t">${esc(o.v.t)}</span><span class="s">${esc(o.v.place)}${o.v.sub?' · '+esc(o.v.sub):''}</span>`).join('')}</div>`;
   document.getElementById('day').innerHTML=`
     <div class="big">
       <div class="num"><small>${cur}요일 1교시</small><strong>${p1}<em>명</em></strong></div>
@@ -219,24 +230,25 @@ function renderDay(){
       ${group('var(--chalk)','끝까지 남는 학생',g.in,chips(g.in))}
       ${g.ok.length?group('var(--ok)','출석처리 (공동교육과정)',g.ok,chips(g.ok)):''}
       ${g.p1.length?group('var(--p1)','1교시만 하고 학원',g.p1,rows(g.p1)):''}
-      ${group('var(--out)','학원·과외로 빠짐 (시작 시간순)',g.out,rows(g.out))}
+      ${group('var(--out)','학원·과외로 빠짐',g.out,rows(g.out))}
       ${group('var(--x)','불참 (X)',g.x,chips(g.x))}
     </div>`;
 }
 function renderGrid(){
   const cell=v=>{
-    if(v.k==='in')return '';
+    if(v.k==='in')return v.note?`<span class="c inn"><b>참여</b><br>${esc(v.note)}</span>`:'';
     if(v.k==='x')return '<span class="c x">X</span>';
-    if(v.k==='ok')return '<span class="c ok">공동교육</span>';
-    const lab=(v.place==='과외'?'과외 ':'')+(v.sub?v.sub+' ':'')+short(v.t);
-    return `<span class="c ${v.k}">${v.k==='p1'?'1교시 → ':''}${esc(lab)}</span>`;
+    if(v.k==='ok')return '<span class="c ok">공동교육과정</span>';
+    const lab=(v.place==='과외'?'과외 ':'')+(v.sub?v.sub+' ':'')+v.t;
+    return v.k==='p1'?`<span class="c p1"><b>1교시 참여</b><br>${esc(lab)}</span>`:`<span class="c ${v.k}">${esc(lab)}</span>`;
   };
+  const cols=`<colgroup><col class="cn">${DAYS.map(d=>`<col class="${d==='토'?'cs':'cd'}">`).join('')}</colgroup>`;
   const head=`<thead><tr><th class="n">이름</th>${DAYS.map(d=>`<th class="${d===cur?'sel':''}">${d}</th>`).join('')}</tr></thead>`;
   const body=S.map((s,i)=>{
     const allx=DAYS.every(d=>st(s,d).k==='x');
     return `<tr class="${allx?'allx':''}"><th class="n"><small>${i+1}</small>${esc(s[0])}${missed(s).length===0?'<span class="badge" title="개근">★</span>':''}</th>${DAYS.map(d=>`<td class="${d===cur?'sel':''}">${cell(st(s,d))}</td>`).join('')}</tr>`;
   }).join('');
-  document.getElementById('grid').innerHTML=head+'<tbody>'+body+'</tbody>';
+  document.getElementById('grid').innerHTML=cols+head+'<tbody>'+body+'</tbody>';
 }
 const missed=s=>DAYS.filter(d=>!['in','ok'].includes(st(s,d).k));
 function renderStar(){
@@ -244,35 +256,47 @@ function renderStar(){
   const near=S.filter(s=>missed(s).length===1);
   document.getElementById('star').innerHTML=`
     <div><h2>개근 학생 ${full.length}명</h2><p>월~토 한 번도 안 빠지고 야자 참여 (공동교육과정 출석처리는 참여로 셈)</p></div>
-    ${full.length?`<div class="stars">${full.map(s=>`<span>${esc(s[0])}</span>`).join('')}</div>`:'<div class="empty">이번 주는 없음</div>'}
-    ${near.length?`<div><div class="sub">하루만 빠지는 학생 ${near.length}명</div><div class="near">${near.map(s=>`<span><b>${esc(s[0])}</b><em>${missed(s)[0]} 빠짐</em></span>`).join('')}</div></div>`:''}`;
+    ${full.length?`<div class="stars">${full.map(s=>`<span>${S.indexOf(s)+1} ${esc(s[0])}</span>`).join('')}</div>`:'<div class="empty">이번 주는 없음</div>'}
+    ${near.length?`<div><div class="sub">하루만 빠지는 학생 ${near.length}명</div><div class="near">${near.map(s=>`<span><b>${NO(s[0])}${esc(s[0])}</b><em>${missed(s)[0]} 빠짐</em></span>`).join('')}</div></div>`:''}`;
 }
 // ---- 불참 기록 (이 기기 브라우저에 저장) ----
 const LS='yaja-absent';
 let AB={};try{AB=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){AB={}}
 const saveAB=()=>{try{localStorage.setItem(LS,JSON.stringify(AB))}catch(e){}};
-let wk=0, clearArmed=false;
+let wk=0, clearArmed=false, delArmed='', delTimer=0;
+async function removeRec(key,name){
+  const a=[...((AB[key]||{})[name]||[])];
+  if(AB[key]){delete AB[key][name];if(!Object.keys(AB[key]).length)delete AB[key];}
+  renderCheck();renderLog();
+  if(!API){saveAB();return}
+  for(const p of a)await apiSet(key,name,p,false);
+}
 // 공유 모드: API(구글 시트 주소)가 있으면 모든 기기가 같은 기록을 봄
-let API='', PINV='', syncMsg='', seq=0;
-function setRows(rows){AB={};rows.forEach(([d,n,p])=>{const r=AB[d]||(AB[d]={});const a=r[n]||(r[n]=[]);if(!a.includes(+p))a.push(+p)})}
+let API='', PINV='', syncMsg='', seq=0, pending=0;
+function setRows(rows){AB={};rows.forEach(([d,n,p])=>{d=String(d);n=String(n).trim();const r=AB[d]||(AB[d]={});const a=r[n]||(r[n]=[]);if(!a.includes(+p))a.push(+p)})}
 async function apiLoad(){
-  if(!API)return;const my=++seq;
+  if(!API||pending)return;const my=++seq;
   try{const r=await fetch(API+'?key='+encodeURIComponent(PINV));const j=await r.json();
     if(my!==seq)return;if(!j.rows)throw 0;setRows(j.rows);syncMsg='';}
   catch(e){if(my===seq)syncMsg='공유 기록을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침을 눌러 주세요.'}
   renderCheck();renderLog();
 }
 async function apiSet(date,name,period,on){
-  const my=++seq;syncMsg='저장 중…';renderLog();
+  const my=++seq;pending++;syncMsg='저장 중…';renderLog();
   try{const r=await fetch(API,{method:'POST',body:JSON.stringify({key:PINV,date,name,period,on})});const j=await r.json();
-    if(!j.rows)throw 0;if(my!==seq)return;setRows(j.rows);syncMsg='저장했어요.';}
+    if(!j.rows)throw 0;
+    const still=j.rows.some(x=>String(x[0])===date&&String(x[1]).trim()===name&&+x[2]===+period);
+    if(my===seq){setRows(j.rows);syncMsg=(!on&&still)?'삭제가 시트에 반영되지 않았어요. 구글 시트에서 그 줄을 직접 지워 주세요.':(on?'저장했어요.':'삭제했어요.');}}
   catch(e){if(my===seq)syncMsg='저장하지 못했어요. 잠시 후 다시 눌러 주세요.'}
+  finally{pending--}
   if(my===seq){renderCheck();renderLog();}
 }
 function startSync(){if(!API)return;AB={};apiLoad();setInterval(apiLoad,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)apiLoad()})}
 function dateOf(d){const now=new Date();const dow=(now.getDay()+6)%7;const t=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow+DAYS.indexOf(d)+wk*7);return t}
 const ymd=t=>`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
 const lab=k=>{const [y,m,d]=k.split('-').map(Number);return `${m}/${d}(${'일월화수목금토'[new Date(y,m-1,d).getDay()]})`};
+const NUM=n=>{const i=S.findIndex(s=>s[0]===n);return i<0?99:i+1};
+const byNo=(a,b)=>NUM(a[0])-NUM(b[0]);
 const periods=a=>a.slice().sort().map(x=>x+'교시').join('·');
 function toggle(key,name,per){
   const r=AB[key]||(AB[key]={});const a=r[name]||(r[name]=[]);
@@ -289,7 +313,7 @@ function renderCheck(){
   el.innerHTML=`<div class="phead"><div><h2>출석 체크 · ${lab(key)}</h2><p>남아 있어야 하는데 없는 학생의 교시를 누르세요. 다시 누르면 취소돼요.</p></div>
     <div class="wk"><button class="btn" id="wkprev" aria-label="이전 주">◀</button><span style="font-size:13px;min-width:52px;text-align:center">${wkLabel}</span><button class="btn" id="wknext" aria-label="다음 주" ${wk>=0?'disabled':''}>▶</button></div></div>
     ${exp.length?`<div class="cklist">${exp.map(o=>{const a=rec[o.name]||[];const p1=o.v.k==='p1';
-      return `<div class="ck ${a.length?'miss':''}"><span class="nm">${esc(o.name)}${p1?'<small>1교시만</small>':''}</span>
+      return `<div class="ck ${a.length?'miss':''}"><span class="nm">${esc(o.name)}${p1?'<small>1교시만</small>':''}${o.v.note?`<small>${esc(o.v.note)}</small>`:''}</span>
       <button data-n="${esc(o.name)}" data-p="1" aria-pressed="${a.includes(1)}">1교시</button>
       <button data-n="${esc(o.name)}" data-p="2" aria-pressed="${a.includes(2)}" ${p1&&!a.includes(2)?'disabled':''}>${p1?'학원':'2교시'}</button></div>`}).join('')}</div>`:'<div class="empty">이 날은 남아야 하는 학생이 없어요.</div>'}`;
   el.querySelectorAll('.ck button').forEach(b=>b.onclick=()=>toggle(key,b.dataset.n,+b.dataset.p));
@@ -298,22 +322,27 @@ function renderCheck(){
 }
 function logText(){
   const keys=Object.keys(AB).sort();
-  return keys.map(k=>`${lab(k)} `+Object.entries(AB[k]).map(([n,a])=>`${n}(${periods(a)})`).join(', ')).join('\n');
+  return keys.map(k=>`${lab(k)} `+Object.entries(AB[k]).sort(byNo).map(([n,a])=>`${NUM(n)}번 ${n}(${periods(a)})`).join(', ')).join('\n');
 }
 function renderLog(){
   const keys=Object.keys(AB).sort().reverse();
   const tot={};keys.forEach(k=>Object.entries(AB[k]).forEach(([n,a])=>{const t=tot[n]||(tot[n]={d:0,p:0});t.d++;t.p+=a.length}));
-  const tl=Object.entries(tot).sort((a,b)=>b[1].p-a[1].p||a[0].localeCompare(b[0]));
+  const tl=Object.entries(tot).sort(byNo);
   const el=document.getElementById('log');
-  el.innerHTML=`<div class="phead"><div><h2>불참 기록</h2><p>${API?'누가 어느 기기에서 체크해도 모두에게 같이 보여요. 구글 시트에도 저장돼요.':"이 컴퓨터(브라우저)에만 저장돼요. 다른 기기에서는 안 보이니 가끔 '기록 복사'로 백업해 두세요."}</p></div>
+  el.innerHTML=`<div class="phead"><div><h2>불참 기록 <span style="font-weight:500;color:var(--muted);font-size:13px">(칠판에 현황 기록하는 당번이 체크)</span></h2><p>${API?'누가 어느 기기에서 체크해도 모두에게 같이 보여요. 구글 시트에도 저장돼요.':"이 컴퓨터(브라우저)에만 저장돼요. 다른 기기에서는 안 보이니 가끔 '기록 복사'로 백업해 두세요."}</p></div>
     <div class="wk">${API?'<button class="btn" id="reload">새로고침</button>':''}${keys.length?`<button class="btn" id="copylog">기록 복사</button>${API?'':`<button class="btn danger" id="clearlog">${clearArmed?'한 번 더 누르면 전부 삭제':'전체 지우기'}</button>`}`:''}</div></div>
     ${syncMsg?`<div class="toast" style="color:${/못/.test(syncMsg)?'var(--x)':'var(--muted)'}">${syncMsg}</div>`:''}
-    ${keys.length?`<div><div class="sub">학생별 누적 (교시 수)</div><div class="totals">${tl.map(([n,t])=>`<span>${esc(n)} <b>${t.p}</b></span>`).join('')}</div></div>
-    <div class="loglist">${keys.map(k=>`<div class="logday"><span class="d">${lab(k)}</span><span class="who">${Object.entries(AB[k]).map(([n,a])=>`<span>${esc(n)}<em>${periods(a)}</em></span>`).join('')}</span></div>`).join('')}</div>
+    ${keys.length?`<div><div class="sub">학생별 누적 (교시 수)</div><div class="totals">${tl.map(([n,t])=>`<span>${NO(n)}${esc(n)} <b>${t.p}</b></span>`).join('')}</div></div>
+    <div class="loglist">${keys.map(k=>`<div class="logday"><span class="d">${lab(k)}</span><span class="who">${Object.entries(AB[k]).sort(byNo).map(([n,a])=>{const id=k+'|'+n;return `<span>${NO(n)}${esc(n)}<em>${periods(a)}</em><button class="del ${delArmed===id?'armed':''}" data-k="${k}" data-n="${esc(n)}" aria-label="${esc(n)} ${lab(k)} 기록 삭제">${delArmed===id?'삭제할까요?':'✕'}</button></span>`}).join('')}</span></div>`).join('')}</div>
     <div class="toast" id="toast" role="status"></div><div id="copyfb"></div>`
     :'<div class="empty">아직 기록이 없어요. 위 출석 체크에서 교시를 누르면 여기에 날짜별로 쌓여요.</div>'}`;
   if(API)document.getElementById('reload').onclick=()=>{syncMsg='불러오는 중…';renderLog();apiLoad()};
   if(!keys.length)return;
+  el.querySelectorAll('.del').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.k+'|'+b.dataset.n;
+    if(delArmed!==id){delArmed=id;renderLog();clearTimeout(delTimer);delTimer=setTimeout(()=>{delArmed='';renderLog()},4000);return}
+    delArmed='';removeRec(b.dataset.k,b.dataset.n);
+  });
   document.getElementById('copylog').onclick=()=>{
     const txt=logText(), t=document.getElementById('toast');
     const fb=()=>{document.getElementById('copyfb').innerHTML=`<textarea class="copybox" id="copytxt" readonly>${esc(txt)}</textarea>`;const a=document.getElementById('copytxt');a.focus();a.select();t.textContent='아래 글을 Ctrl+C로 복사하세요.'};
