@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>html,body{height:100%}body{margin:0}</style>
+<title>2학년 2반 야간자율학습 현황</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Do+Hyeon&display=swap">
+<style>
+/* Layout: 요일 탭 → 그날 요약(남는 인원 + 그룹별 명단) → 주간 전체 격자 */
+:root{
+  --bg:#F2F4F1; --panel:#FFFFFF; --ink:#1B2420; --muted:#5E6B64; --line:#D9DFDA;
+  --chalk:#2E6A4E; --chalk-soft:#E2EEE7;
+  --out:#B0700A; --out-soft:#FBF0DC;
+  --p1:#6E50A0; --p1-soft:#EEE8F7;
+  --ok:#2F64A0; --ok-soft:#E3ECF7;
+  --x:#A8473B; --x-soft:#F7E5E2;
+  --display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
+  --body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141A17; --panel:#1C2420; --ink:#E6ECE8; --muted:#97A49D; --line:#2E3934;
+  --chalk:#7CC4A0; --chalk-soft:#1F3329;
+  --out:#E8A94A; --out-soft:#3A2D16;
+  --p1:#B79BE3; --p1-soft:#2E2640;
+  --ok:#8AB4E8; --ok-soft:#1E2C3E;
+  --x:#E58C80; --x-soft:#3C2320; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141A17; --panel:#1C2420; --ink:#E6ECE8; --muted:#97A49D; --line:#2E3934;
+  --chalk:#7CC4A0; --chalk-soft:#1F3329;
+  --out:#E8A94A; --out-soft:#3A2D16;
+  --p1:#B79BE3; --p1-soft:#2E2640;
+  --ok:#8AB4E8; --ok-soft:#1E2C3E;
+  --x:#E58C80; --x-soft:#3C2320; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+header h1{font-family:var(--display);font-weight:400;font-size:30px;margin:0;letter-spacing:.01em}
+header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.tab{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:10px 4px;cursor:pointer;font-family:var(--body);display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1}
+.tab span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{background:var(--chalk);border-color:var(--chalk);color:var(--bg)}
+.tab[aria-selected="true"] span{color:var(--bg);opacity:.85}
+.tab:focus-visible{outline:3px solid var(--p1);outline-offset:2px}
+.today{font-size:10px;letter-spacing:.06em}
+.day{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;grid-template-columns:220px 1fr;gap:24px}
+.big{display:flex;flex-direction:column;gap:14px}
+.num{display:flex;flex-direction:column}
+.num small{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.num strong{font-family:var(--display);font-weight:400;font-size:52px;line-height:1;color:var(--chalk);font-variant-numeric:tabular-nums}
+.num strong em{font-style:normal;font-size:20px;color:var(--muted);margin-left:4px}
+.groups{display:flex;flex-direction:column;gap:16px;min-width:0}
+.g h3{margin:0 0 8px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.g h3 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.g h3 span{color:var(--muted);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:999px;padding:3px 10px;font-size:14px;background:var(--chalk-soft);color:var(--ink)}
+.rows{display:grid;grid-template-columns:auto auto 1fr;gap:4px 14px;font-size:14px;align-items:baseline}
+.rows .t{font-variant-numeric:tabular-nums;color:var(--out);font-weight:500;white-space:nowrap}
+.rows .s{color:var(--muted)}
+.empty{color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.gridbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:middle}
+thead th{font-weight:700;font-size:13px;background:var(--panel);position:sticky;top:0}
+th.n{position:sticky;left:0;background:var(--panel);z-index:1;white-space:nowrap;font-weight:500}
+th.n small{color:var(--muted);font-variant-numeric:tabular-nums;margin-right:6px;display:inline-block;width:16px;text-align:right}
+td.sel,th.sel{background:var(--chalk-soft)}
+.c{display:block;border-radius:6px;padding:3px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.c.out{background:var(--out-soft);color:var(--out)}
+.c.p1{background:var(--p1-soft);color:var(--p1)}
+.c.ok{background:var(--ok-soft);color:var(--ok)}
+.c.x{background:var(--x-soft);color:var(--x);text-align:center;font-weight:700}
+tr.allx th.n{color:var(--x)}
+h2{font-size:15px;margin:0;font-weight:700}
+.star{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.star h2{font-family:var(--display);font-weight:400;font-size:22px;color:var(--chalk)}
+.star p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.stars{display:flex;flex-wrap:wrap;gap:8px}
+.stars span{border-radius:999px;padding:5px 14px;font-size:16px;font-weight:700;background:var(--chalk);color:var(--bg)}
+.near{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+.near b{font-weight:500}
+.near em{font-style:normal;color:var(--muted);font-size:12.5px;margin-left:4px}
+.sub{font-size:13px;font-weight:700;color:var(--muted);margin:0 0 6px}
+th.n .badge{color:var(--chalk);margin-left:4px}
+.sec{display:flex;flex-direction:column;gap:10px}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+@media (max-width:680px){
+  .day{grid-template-columns:1fr;gap:18px;padding:16px}
+  .big{flex-direction:row;gap:28px}
+  .num strong{font-size:42px}
+  .tab b{font-size:19px}
+}
+.lock{min-height:100%;display:flex;align-items:center;justify-content:center;padding-block:80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lock form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 24px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;text-align:center}
+.lock h1{font-family:var(--display);font-weight:400;font-size:24px;margin:0}
+.lock label{color:var(--muted);font-size:13px}
+.lock input{font-size:28px;letter-spacing:.5em;text-align:center;padding:10px 0 10px .5em;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-family:var(--body)}
+.lock input:focus-visible{outline:3px solid var(--chalk);outline-offset:1px}
+.lock button{appearance:none;border:0;border-radius:10px;padding:11px;background:var(--chalk);color:var(--bg);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--body)}
+.lock p{margin:0;min-height:1.2em;color:var(--x);font-size:13px}
+[hidden]{display:none!important}
+</style>
+
+</head>
+<body>
+<div class="lock" id="lock">
+  <form id="lockform">
+    <h1>2학년 2반 야간자율학습 현황</h1>
+    <label for="pin">PIN 4자리를 입력하세요</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" autofocus>
+    <button type="submit">열기</button>
+    <p id="lockmsg" role="alert"></p>
+  </form>
+</div>
+<div class="wrap" id="app" hidden>
+  <header>
+    <h1>2학년 2반 야간자율학습 현황</h1>
+    <p>동아리·배드민턴·관악·합창부 활동은 칠판에 적고 출석 처리. 학원 보충은 수강증 받아 전날 아침까지 제출.</p>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+
+  <section class="day" id="day"></section>
+
+  <section class="star" id="star"></section>
+
+  <section class="sec">
+    <div class="sechead">
+      <h2>주간 전체 보기</h2>
+      <div class="legend">
+        <span><i style="background:var(--chalk-soft)"></i>야자 참여</span>
+        <span><i style="background:var(--p1-soft)"></i>1교시만</span>
+        <span><i style="background:var(--ok-soft)"></i>출석처리</span>
+        <span><i style="background:var(--out-soft)"></i>학원·과외</span>
+        <span><i style="background:var(--x-soft)"></i>불참(X)</span>
+      </div>
+    </div>
+    <div class="gridbox"><table id="grid"></table></div>
+  </section>
+</div>
+
+<script>
+const DAYS=['월','화','수','목','금','토'];
+const R=(sub,t,place='학원')=>({k:'out',sub,t,place});
+const P1=(sub,t)=>({k:'p1',sub,t,place:'학원'});
+const X={k:'x'}, OK={k:'ok',sub:'공동교육과정'};
+const ALLX={월:X,화:X,수:X,목:X,금:X,토:X};
+let S=[];
+const ENC={"s":"NpWnBGkengZj72N54T8AXA==","i":"pe+SoqvpGTlF0dGq","c":"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"};
+const st=(s,d)=>s[1][d]||{k:'in'};
+function tally(d){
+  const g={in:[],p1:[],ok:[],out:[],x:[]};
+  S.forEach((s,i)=>{const v=st(s,d);g[v.k].push({n:i+1,name:s[0],v})});
+  g.out.sort((a,b)=>a.v.t.localeCompare(b.v.t));
+  return {g,p1:g.in.length+g.ok.length+g.p1.length,p2:g.in.length+g.ok.length};
+}
+const short=t=>t.replace(/:00/g,'');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const jsDay=new Date().getDay(); // 0=일
+const todayIdx=jsDay>=1&&jsDay<=6?jsDay-1:0;
+let cur=DAYS[todayIdx];
+try{const h=decodeURIComponent(location.hash.slice(1));if(DAYS.includes(h))cur=h}catch(e){}
+
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=DAYS.map((d,i)=>{
+    const t=tally(d);
+    const cnt=t.p1===t.p2?`${t.p1}명`:`${t.p1}/${t.p2}명`;
+    return `<button class="tab" role="tab" id="tab-${i}" aria-selected="${d===cur}" data-d="${d}"><b>${d}</b><span>${cnt}</span>${i===todayIdx&&jsDay!==0?'<span class="today">오늘</span>':''}</button>`;
+  }).join('');
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{cur=b.dataset.d;render()});
+}
+function group(color,title,list,body){
+  return `<div class="g"><h3><i style="background:${color}"></i>${title}<span>${list.length}명</span></h3>${list.length?body:'<div class="empty">없음</div>'}</div>`;
+}
+function renderDay(){
+  const {g,p1,p2}=tally(cur);
+  const chips=l=>`<div class="chips">${l.map(o=>`<span class="chip">${esc(o.name)}</span>`).join('')}</div>`;
+  const rows=l=>`<div class="rows">${l.map(o=>`<span class="t">${esc(o.v.t)}</span><span>${esc(o.name)}</span><span class="s">${esc(o.v.place)}${o.v.sub?' · '+esc(o.v.sub):''}</span>`).join('')}</div>`;
+  document.getElementById('day').innerHTML=`
+    <div class="big">
+      <div class="num"><small>${cur}요일 1교시</small><strong>${p1}<em>명</em></strong></div>
+      <div class="num"><small>${cur}요일 2교시</small><strong>${p2}<em>명</em></strong></div>
+    </div>
+    <div class="groups">
+      ${group('var(--chalk)','끝까지 남는 학생',g.in,chips(g.in))}
+      ${g.ok.length?group('var(--ok)','출석처리 (공동교육과정)',g.ok,chips(g.ok)):''}
+      ${g.p1.length?group('var(--p1)','1교시만 하고 학원',g.p1,rows(g.p1)):''}
+      ${group('var(--out)','학원·과외로 빠짐 (시작 시간순)',g.out,rows(g.out))}
+      ${group('var(--x)','불참 (X)',g.x,chips(g.x))}
+    </div>`;
+}
+function renderGrid(){
+  const cell=v=>{
+    if(v.k==='in')return '';
+    if(v.k==='x')return '<span class="c x">X</span>';
+    if(v.k==='ok')return '<span class="c ok">공동교육</span>';
+    const lab=(v.place==='과외'?'과외 ':'')+(v.sub?v.sub+' ':'')+short(v.t);
+    return `<span class="c ${v.k}">${v.k==='p1'?'1교시 → ':''}${esc(lab)}</span>`;
+  };
+  const head=`<thead><tr><th class="n">이름</th>${DAYS.map(d=>`<th class="${d===cur?'sel':''}">${d}</th>`).join('')}</tr></thead>`;
+  const body=S.map((s,i)=>{
+    const allx=DAYS.every(d=>st(s,d).k==='x');
+    return `<tr class="${allx?'allx':''}"><th class="n"><small>${i+1}</small>${esc(s[0])}${missed(s).length===0?'<span class="badge" title="개근">★</span>':''}</th>${DAYS.map(d=>`<td class="${d===cur?'sel':''}">${cell(st(s,d))}</td>`).join('')}</tr>`;
+  }).join('');
+  document.getElementById('grid').innerHTML=head+'<tbody>'+body+'</tbody>';
+}
+const missed=s=>DAYS.filter(d=>!['in','ok'].includes(st(s,d).k));
+function renderStar(){
+  const full=S.filter(s=>missed(s).length===0);
+  const near=S.filter(s=>missed(s).length===1);
+  document.getElementById('star').innerHTML=`
+    <div><h2>개근 학생 ${full.length}명</h2><p>월~토 한 번도 안 빠지고 야자 참여 (공동교육과정 출석처리는 참여로 셈)</p></div>
+    ${full.length?`<div class="stars">${full.map(s=>`<span>${esc(s[0])}</span>`).join('')}</div>`:'<div class="empty">이번 주는 없음</div>'}
+    ${near.length?`<div><div class="sub">하루만 빠지는 학생 ${near.length}명</div><div class="near">${near.map(s=>`<span><b>${esc(s[0])}</b><em>${missed(s)[0]} 빠짐</em></span>`).join('')}</div></div>`:''}`;
+}
+function render(){renderTabs();renderDay();renderStar();renderGrid()}
+async function unlock(pin){
+  const d=s=>Uint8Array.from(atob(s),ch=>ch.charCodeAt(0));
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:d(ENC.s),iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:d(ENC.i)},key,d(ENC.c));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+async function tryPin(pin,quiet){
+  const msg=document.getElementById('lockmsg');
+  try{
+    S=await unlock(pin);
+    try{localStorage.setItem('yaja-pin',pin)}catch(e){}
+    document.getElementById('lock').hidden=true;
+    document.getElementById('app').hidden=false;
+    render();
+  }catch(e){
+    if(!quiet){msg.textContent='PIN이 맞지 않아요. 다시 입력해 주세요.';const i=document.getElementById('pin');i.value='';i.focus();}
+  }
+}
+document.getElementById('lockform').addEventListener('submit',e=>{e.preventDefault();tryPin(document.getElementById('pin').value)});
+document.getElementById('pin').addEventListener('input',e=>{if(e.target.value.length===4)tryPin(e.target.value)});
+let saved=null;try{saved=localStorage.getItem('yaja-pin')}catch(e){}
+if(saved)tryPin(saved,true);
+</script>
+</body>
+</html>
