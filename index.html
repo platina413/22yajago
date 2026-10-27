@@ -126,6 +126,11 @@ th.n .badge{color:var(--chalk);margin-left:4px}
 .totals{display:flex;flex-wrap:wrap;gap:6px}
 .totals span{border-radius:999px;padding:3px 10px;font-size:13.5px;background:var(--x-soft);color:var(--x)}
 .totals b{font-variant-numeric:tabular-nums}
+.totals small{font-size:11.5px;margin-left:6px;opacity:.85}
+.rs{font:inherit;font-size:12px;padding:1px 2px;margin-left:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--muted);cursor:pointer}
+.rs.set{color:var(--ink);border-color:var(--muted)}
+.rs.bad{color:var(--x);border-color:var(--x);font-weight:700}
+.rs:focus-visible{outline:2px solid var(--chalk)}
 .copybox{width:100%;min-height:120px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:8px;box-sizing:border-box}
 .toast{color:var(--chalk);font-size:13px;min-height:1em}
 .sec{display:flex;flex-direction:column;gap:10px}
@@ -194,7 +199,7 @@ const P1=(sub,t)=>({k:'p1',sub,t,place:'학원'});
 const X={k:'x'}, OK={k:'ok',sub:'공동교육과정'};
 const ALLX={월:X,화:X,수:X,목:X,금:X,토:X};
 let S=[];
-const ENC={"s":"zVQSjmafMyZWa62hN8PmPQ==","i":"iMYMQWZKsQgTgWdI","c":"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"};
+const ENC={"s":"8LeqROCv5E3U6wRNGacp4w==","i":"GiFcrThHkGZNYgjZ","c":"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"};
 const st=(s,d)=>s[1][d]||{k:'in'};
 const NO=n=>{const i=S.findIndex(s=>s[0]===n);return i<0?'':`<span class="no">${i+1}</span>`};
 function tally(d){
@@ -265,11 +270,15 @@ function renderStar(){
 // ---- 불참 기록 (이 기기 브라우저에 저장) ----
 const LS='yaja-absent';
 let AB={};try{AB=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){AB={}}
-const saveAB=()=>{try{localStorage.setItem(LS,JSON.stringify(AB))}catch(e){}};
+const REASONS=['보충','가정','병결','무단'];
+let RS={};try{RS=JSON.parse(localStorage.getItem('yaja-reason')||'{}')||{}}catch(e){RS={}}
+let reasonOK=true; // 시트 코드가 사유를 지원하는지
+const saveAB=()=>{try{localStorage.setItem(LS,JSON.stringify(AB));localStorage.setItem('yaja-reason',JSON.stringify(RS))}catch(e){}};
 let wk=0, clearArmed=false, delArmed='', delTimer=0;
 async function removeRec(key,name){
   const a=[...((AB[key]||{})[name]||[])];
   if(AB[key]){delete AB[key][name];if(!Object.keys(AB[key]).length)delete AB[key];}
+  delete RS[key+'|'+name];
   renderCheck();renderLog();
   if(!API){saveAB();return}
   for(const p of a)await apiSet(key,name,p,false);
@@ -279,7 +288,7 @@ let API='', PINV='', syncMsg='', seq=0, pending=0;
 let RAW={};
 const ISO=/^\d{4}-\d{2}-\d{2}$/;
 function normDate(d){d=String(d).trim();if(ISO.test(d))return d;const t=new Date(d);return isNaN(t)?d:ymd(t)}
-function setRows(rows){AB={};RAW={};rows.forEach(([d,n,p])=>{const raw=String(d);d=normDate(d);n=String(n).trim();RAW[d+'|'+n+'|'+(+p)]=raw;const r=AB[d]||(AB[d]={});const a=r[n]||(r[n]=[]);if(!a.includes(+p))a.push(+p)})}
+function setRows(rows){AB={};RAW={};RS={};reasonOK=!rows.length||rows.some(x=>x.length>=4);rows.forEach(([d,n,p,rs])=>{const raw=String(d);d=normDate(d);n=String(n).trim();RAW[d+'|'+n+'|'+(+p)]=raw;if(rs)RS[d+'|'+n]=String(rs);const r=AB[d]||(AB[d]={});const a=r[n]||(r[n]=[]);if(!a.includes(+p))a.push(+p)})}
 async function apiLoad(){
   if(!API||pending)return;const my=++seq;
   try{const r=await fetch(API+'?key='+encodeURIComponent(PINV));const j=await r.json();
@@ -296,6 +305,18 @@ async function apiSet(date,name,period,on){
   catch(e){if(my===seq)syncMsg='저장하지 못했어요. 잠시 후 다시 눌러 주세요.'}
   finally{pending--}
   if(my===seq){renderCheck();renderLog();}
+}
+async function setReason(date,name,reason){
+  if(reason)RS[date+'|'+name]=reason;else delete RS[date+'|'+name];
+  if(!API){saveAB();renderLog();return}
+  const raw=[1,2].map(p=>RAW[date+'|'+name+'|'+p]).find(Boolean)||date;
+  const my=++seq;pending++;syncMsg='사유 저장 중…';renderLog();
+  try{const r=await fetch(API,{method:'POST',body:JSON.stringify({key:PINV,action:'reason',date:raw,name,reason})});const j=await r.json();
+    if(!j.rows)throw 0;
+    if(my===seq){setRows(j.rows);syncMsg=reasonOK?'사유를 저장했어요.':'사유가 시트에 저장되지 않았어요. 구글 시트의 Apps Script 코드를 새 버전으로 바꿔 주세요.';}}
+  catch(e){if(my===seq)syncMsg='사유를 저장하지 못했어요. 잠시 후 다시 골라 주세요.'}
+  finally{pending--}
+  if(my===seq)renderLog();
 }
 function startSync(){if(!API)return;AB={};apiLoad();setInterval(apiLoad,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)apiLoad()})}
 function dateOf(d){const now=new Date();const dow=(now.getDay()+6)%7;const t=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow+DAYS.indexOf(d)+wk*7);return t}
@@ -333,7 +354,7 @@ function logKeys(){const ks=Object.keys(AB).sort();if(logMode==='all')return ks;
 const shortLab=k=>{const [y,m,d]=k.split('-').map(Number);return `${m}/${d}`};
 function logText(){
   const keys=logKeys();
-  return keys.map(k=>`${lab(k)} `+Object.entries(AB[k]).sort(byNo).map(([n,a])=>`${NUM(n)}번 ${n}(${periods(a)})`).join(', ')).join('\n');
+  return keys.map(k=>`${lab(k)} `+Object.entries(AB[k]).sort(byNo).map(([n,a])=>`${NUM(n)}번 ${n}(${periods(a)}${RS[k+'|'+n]?', '+RS[k+'|'+n]:''})`).join(', ')).join('\n');
 }
 function renderLog(){
   const keys=logKeys().reverse(), any=Object.keys(AB).length;
@@ -341,13 +362,15 @@ function renderLog(){
   const wkName=wk===0?'이번 주':wk===-1?'지난주':`${-wk}주 전`;
   const rangeTxt=logMode==='all'?'전체 기간':`${wkName} (${shortLab(wa)}~${shortLab(wb)})`;
   const tot={};keys.forEach(k=>Object.entries(AB[k]).forEach(([n,a])=>{const t=tot[n]||(tot[n]={d:0,p:0});t.d++;t.p+=a.length}));
+  keys.forEach(k=>Object.keys(AB[k]).forEach(n=>{const r=RS[k+'|'+n];if(r){const t=tot[n];t.rc=t.rc||{};t.rc[r]=(t.rc[r]||0)+1}}));
+  Object.values(tot).forEach(t=>{t.r=t.rc?REASONS.filter(x=>t.rc[x]).map(x=>x+' '+t.rc[x]).join(' · '):''});
   const tl=Object.entries(tot).sort(byNo);
   const el=document.getElementById('log');
   el.innerHTML=`<div class="phead"><div><h2>불참 기록 <span style="font-weight:500;color:var(--muted);font-size:13px">(칠판에 현황 기록하는 당번이 체크)</span></h2><p>${API?'누가 어느 기기에서 체크해도 모두에게 같이 보여요. 구글 시트에도 저장돼요.':"이 컴퓨터(브라우저)에만 저장돼요. 다른 기기에서는 안 보이니 가끔 '기록 복사'로 백업해 두세요."}</p></div>
     <div class="wk">${API?'<button class="btn" id="reload">새로고침</button>':''}<span class="seg" role="group" aria-label="보기 범위"><button class="btn ${logMode==='week'?'on':''}" id="modeweek" aria-pressed="${logMode==='week'}">주간</button><button class="btn ${logMode==='all'?'on':''}" id="modeall" aria-pressed="${logMode==='all'}">전체</button></span>${keys.length?`<button class="btn" id="copylog">기록 복사</button>${API?'':`<button class="btn danger" id="clearlog">${clearArmed?'한 번 더 누르면 전부 삭제':'전체 지우기'}</button>`}`:''}</div></div>
     ${syncMsg?`<div class="toast" style="color:${/못/.test(syncMsg)?'var(--x)':'var(--muted)'}">${syncMsg}</div>`:''}
-    ${keys.length?`<div><div class="sub">학생별 누적 · ${rangeTxt} (교시 수)</div><div class="totals">${tl.map(([n,t])=>`<span>${NO(n)}${esc(n)} <b>${t.p}</b></span>`).join('')}</div></div>
-    <div class="loglist">${keys.map(k=>`<div class="logday"><span class="d">${lab(k)}</span><span class="who">${Object.entries(AB[k]).sort(byNo).map(([n,a])=>{const id=k+'|'+n;return `<span>${NO(n)}${esc(n)}<em>${periods(a)}</em><button class="del ${delArmed===id?'armed':''}" data-k="${k}" data-n="${esc(n)}" aria-label="${esc(n)} ${lab(k)} 기록 삭제">${delArmed===id?'삭제할까요?':'✕'}</button></span>`}).join('')}</span></div>`).join('')}</div>
+    ${keys.length?`<div><div class="sub">학생별 누적 · ${rangeTxt} (교시 수)</div><div class="totals">${tl.map(([n,t])=>`<span>${NO(n)}${esc(n)} <b>${t.p}</b>${t.r?`<small>${t.r}</small>`:''}</span>`).join('')}</div></div>
+    <div class="loglist">${keys.map(k=>`<div class="logday"><span class="d">${lab(k)}</span><span class="who">${Object.entries(AB[k]).sort(byNo).map(([n,a])=>{const id=k+'|'+n;const rs=RS[k+'|'+n]||'';return `<span>${NO(n)}${esc(n)}<em>${periods(a)}</em><select class="rs ${rs==='무단'?'bad':rs?'set':''}" data-k="${k}" data-n="${esc(n)}" aria-label="${esc(n)} 불참 사유"><option value="">사유</option>${REASONS.map(x=>`<option${x===rs?' selected':''}>${x}</option>`).join('')}</select><button class="del ${delArmed===id?'armed':''}" data-k="${k}" data-n="${esc(n)}" aria-label="${esc(n)} ${lab(k)} 기록 삭제">${delArmed===id?'삭제할까요?':'✕'}</button></span>`}).join('')}</span></div>`).join('')}</div>
     <div class="toast" id="toast" role="status"></div><div id="copyfb"></div>`
     :`<div class="empty">${!any?'아직 기록이 없어요. 위 출석 체크에서 교시를 누르면 여기에 날짜별로 쌓여요.':logMode==='all'?'기록이 없어요.':`${rangeTxt}에는 불참 기록이 없어요. 다른 주는 출석 체크의 ◀ 버튼이나 '전체'로 볼 수 있어요.`}</div>`}`;
   const setMode=m=>{logMode=m;try{localStorage.setItem('yaja-logmode',m)}catch(e){}renderLog()};
@@ -355,6 +378,7 @@ function renderLog(){
   document.getElementById('modeall').onclick=()=>setMode('all');
   if(API)document.getElementById('reload').onclick=()=>{syncMsg='불러오는 중…';renderLog();apiLoad()};
   if(!keys.length)return;
+  el.querySelectorAll('.rs').forEach(sel=>sel.onchange=()=>setReason(sel.dataset.k,sel.dataset.n,sel.value));
   el.querySelectorAll('.del').forEach(b=>b.onclick=()=>{
     const id=b.dataset.k+'|'+b.dataset.n;
     if(delArmed!==id){delArmed=id;renderLog();clearTimeout(delTimer);delTimer=setTimeout(()=>{delArmed='';renderLog()},4000);return}
